@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+// import { ReactDOM } from 'react-dom';
+import HemisphereDisplay from './HemisphereDisplay';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+
+  state = { latitude: null, errorMessage: '' }
+
+  componentDidMount() {
+    window.navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.setState({latitude : position.coords.latitude})
+        // this.state.latitude = position.coords.latitude
+      },
+      (error) => {
+        this.setState({ errorMessage: error.message })
+      }
+    );
+  }
+
+  render() {
+        
+      if (this.state.errorMessage && !this.state.latitude) {
+        return <div> {this.state.errorMessage} </div>
+      }
+      if (!this.state.errorMessage && this.state.latitude) {
+        return <div>
+          {/* {{this.state.latitude}} */}
+          <HemisphereDisplay latitude={this.state.latitude} />
+           </div>
+      } else {
+        return <div> Loading...</div>
+      }
+    
+  }
 }
 
 export default App;
